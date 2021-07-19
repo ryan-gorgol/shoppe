@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Order } from './entities';
+import { NavLink } from 'react-router-dom';
 
 interface Props {
   order: Order;
@@ -13,7 +14,9 @@ export class Header extends Component<Props> {
         {count === 0
           ? '(No Selection)'
           : `${count} product(s), $${this.props.order.total.toFixed(2)}`}
-        <button className="btn btn-s btn-primary m-1">Submit Order</button>
+        <NavLink to="/order" className="btn btn-sm btn-primary m-1">
+          Submit Order
+        </NavLink>
       </div>
     );
   }

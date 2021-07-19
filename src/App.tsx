@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
-// import { ProductList } from './productList';
-// import { Product, Order } from './entities';
 import { dataStore } from './dataStore';
 import { Provider } from 'react-redux';
 import { HttpHandler } from './httpHandler';
 import { addProduct } from './actionCreators';
 import { ConnectedProductList } from './productListConnector';
+import {
+  Switch,
+  Route,
+  Redirect,
+  BrowserRouter,
+  RouteComponentProps,
+} from 'react-router-dom';
+import { OrderDetails } from './OrderDetail';
+import { Summary } from './Summary';
 import './App.css';
 
 interface Props {
@@ -29,13 +36,30 @@ export default class App extends Component<Props> {
   render = () => (
     <div className="App">
       <Provider store={dataStore}>
-        <ConnectedProductList />
+        <BrowserRouter>
+          <Switch>
+            <Route path="/products" component={ConnectedProductList} />
+            <Route
+              path="/order"
+              render={(props) => (
+                <OrderDetails
+                  {...props}
+                  submitCallback={() => this.submitCallback(props)}
+                />
+              )}
+            />
+            <Route path="/Summary/:id" component={Summary} />
+            <Redirect to="products" />
+          </Switch>
+        </BrowserRouter>
       </Provider>
     </div>
   );
 
-  submitCallback = () => {
-    console.log('Submit order');
+  submitCallback = (routeProps: RouteComponentProps) => {
+    this.httpHandler.storeOrder(dataStore.getState().order, (id) =>
+      routeProps.history.push(`/Summary/${id}`),
+    );
   };
 
   // get categories(): string[] {
